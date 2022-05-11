@@ -25,13 +25,13 @@ typedef struct
          * in PA2 able to directly access these registers.
          */
         rtlreg_t eax;
-        rtlreg_t ecx;
         rtlreg_t edx;
+        rtlreg_t ecx;
         rtlreg_t ebx;
-        rtlreg_t esp;
         rtlreg_t ebp;
         rtlreg_t esi;
         rtlreg_t edi;
+        rtlreg_t esp;
       };
     };
   };
