@@ -42,14 +42,20 @@ static int cmd_si(char *args) {
   if (args != NULL)
   {
     sscanf(args, "%d", &n);
+    //n = atoi(args);
   }
   cpu_exec(n);
   return 0;
 }
 
 static int cmd_info(char *args) {
-  TODO();
-  return 0;
+  if (strcmp(args, "r"))
+  {
+    isa_reg_display();
+    return 0;
+  }
+  
+  return -1;
 }
 static int cmd_x(char *args) {
   TODO();
