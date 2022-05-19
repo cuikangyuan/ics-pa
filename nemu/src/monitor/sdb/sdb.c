@@ -38,7 +38,12 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_si(char *args) {
-  TODO();
+  int n = 1;
+  if (args != NULL)
+  {
+    sscanf(args, "%d", &n);
+  }
+  cpu_exec(n);
   return 0;
 }
 
