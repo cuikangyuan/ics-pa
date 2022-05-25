@@ -1,5 +1,7 @@
 #include <isa.h>
 #include <cpu/cpu.h>
+#include <memory/vaddr.h>
+#include <memory/paddr.h>
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
@@ -38,7 +40,7 @@ static int cmd_q(char *args) {
 }
 
 static int cmd_si(char *args) {
-  int n = 1;
+  int32_t n = 1;
   if (args != NULL)
   {
     sscanf(args, "%d", &n);
@@ -58,7 +60,34 @@ static int cmd_info(char *args) {
   return -1;
 }
 static int cmd_x(char *args) {
-  TODO();
+  if (args == NULL)
+  {
+    return 0;
+  }
+  char* token;
+  token = strtok(args, " ");
+  int64_t n = -1;
+  sscanf(args, "%ld", &n);
+  if (n < 0)
+  {
+    printf("Invalid number\n");
+    return 0;
+  }
+
+  token = strtok(NULL, "");
+  if (token == NULL)
+  {
+    return 0;
+  }
+
+  u_int32_t val;
+  sscanf(token, "0x%x", &val);
+  for (int64_t i = 0; i < n; i++)
+  {
+    printf("0x%08lx   ", val + i * 4);
+    printf("0x%08x\n", vaddr_read(val + i * 4, 4));
+  }
+  
   return 0;
 }
 static int cmd_p(char *args) {
