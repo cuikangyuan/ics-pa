@@ -131,6 +131,167 @@ static bool make_token(char *e) {
 }
 
 
+static bool is_opt(int opt) {
+  if (opt == '+' || opt == '-' || opt == '*' || opt == '/' || opt == TK_EQ) return true;
+  else return false;
+}
+
+static int opt_level(int opt, int* cur) {
+  int level = 0;
+  switch (opt)
+  {
+    case '+':
+    case '-':
+      level = 4; 
+      break;
+    case '*':
+    case '/':
+      level = 3;
+      break;
+    case TK_EQ:
+      level = 7;
+      break;
+    default:
+      break;
+  }
+
+  if(level > *cur) {
+    *cur = level;
+    return 1;
+  } else if (level < *cur) {
+    return -1;
+  } else { 
+    return 0;
+  }
+  
+}
+
+static bool check_parentheses(int p, int q) {
+  int top = 0;
+  bool is_first_matched = true;
+
+  if (tokens[p].type != '(' || tokens[q].type != ')')
+  {
+    return false;
+  }
+
+  int i;
+  for (i = p; i <= q; i++)
+  {
+    if (tokens[i].type == '(')
+    {
+      top++;
+    } else if (tokens[i].type == ')')
+    {
+      top--;
+      if (top == 0 && i != q)
+      {
+        is_first_matched = false;
+      }
+      
+    }
+  }
+
+  if (top != 0 || is_first_matched == false)
+  {
+    return false;
+  } else {
+    return true;
+  }
+  
+  
+  
+}
+
+static uint32_t get_val(int p) {
+  uint32_t val;
+  if (tokens[p].type == TK_NUM)
+  {
+    sscanf(tokens[p].str, "%d", &val);
+  }
+  
+  return val;
+}
+
+static int get_main_opt(int p, int q) {
+  int parentheses = 0, cur = 0;
+  int pos = 0;
+  int i;
+  for (i = p; i <= q; i++)
+  {
+      int type = tokens[i].type;
+      if (type == '(')
+      {
+         parentheses++;
+         continue;
+      } else if (type == ')')
+      {
+          parentheses--;
+          continue;
+      }
+
+      if (is_opt(type) && parentheses == 0)
+      {
+        //if opt and not surrounded by parentheses
+        //find the highest level opt
+        if (opt_level(type, &cur) > 0)
+        {
+          pos = i;
+        }
+        
+      }
+           
+  }
+
+  return pos;
+  
+}
+
+static uint32_t eval(int p, int q) {
+  if (p > q) 
+  {
+    /*Bad Expression*/
+    assert(0);
+
+  } else if (p == q) 
+  {
+    /* Single token
+        For now this token should be a number
+        Return the value of the number
+     */
+    return get_val(p);
+  } else if (check_parentheses(p, q) == true)
+  {
+    /* The expression is surrounded by a matched pair of parentheses.
+    If that is the case , just throw away the parentheses
+     */
+    return eval(p + 1, q - 1);
+  } else 
+  {
+      int32_t val1, val2;
+      int main_opt = get_main_opt(p, q);
+      val1 = eval(p, main_opt - 1);
+      val2 = eval(main_opt + 1, q);
+      switch (tokens[main_opt].type)
+      {
+      case '+':
+        return val1 + val2;
+      case '-':
+        return val1 - val2;
+      case '*':
+        return val1 * val2;
+      case '/':
+        return val1 / val2;
+      default:
+        assert(0);
+        break;
+      }
+  }
+  
+  
+  
+}
+
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
     *success = false;
@@ -138,7 +299,7 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
+  *success = true;
 
-  return 0;
+  return eval(0, nr_token - 1;);
 }
