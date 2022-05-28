@@ -16,6 +16,14 @@ static char *code_format =
 "  return 0; "
 "}";
 
+static int choose(int n) {
+  return rand() % n;
+}
+
+static void gen_num() {
+  sprintf(buf + strlen(buf), "%u", (unsigned int) rand() % 10000);
+  buf[strlen(buf)] = '\0';
+}
 
 static void gen(char a) {
   sprintf(buf + strlen(buf), "%c", a);
@@ -23,7 +31,7 @@ static void gen(char a) {
 }
 
 static void gen_rand_op() {
-  char opt;
+  char opt = ' ';
   switch (rand() % 4)
   {
     case 0: opt = '+'; break;  
@@ -87,8 +95,9 @@ int main(int argc, char *argv[]) {
     assert(fp != NULL);
 
     char buf1[30] = {0};
-    fread(buf1, sizeof(buf1), 1, fp);
-    if (strlen(buf1) == 0)
+    ret = fread(buf1, sizeof(buf1), 1, fp);
+    
+    if (ret != 0 || strlen(buf1) == 0)
     {
       continue;
     }
