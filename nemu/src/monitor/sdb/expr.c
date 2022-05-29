@@ -7,7 +7,7 @@
 
 enum {
   TK_NOTYPE = 256, TK_EQ,
-  TK_NUM
+  TK_NUM, TK_REG, TK_HEX
   /* TODO: Add more token types */
 
 };
@@ -29,7 +29,9 @@ static struct rule {
   {"\\*", '*'},         //multi
   {"\\(", '('},         //parenthess_l
   {"\\)", ')'},         //parenthess_r
-  {"[0-9]+", TK_NUM}    //decimal
+  {"0[Xx][a-fA-F0-9]+", TK_HEX}, //hex
+  {"[0-9]+", TK_NUM},   //decimal
+  {"\\$[a-z][A-Z]+", TK_REG} //register
 
 };
 
@@ -80,7 +82,7 @@ static bool make_token(char *e) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
 
-        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
+        Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s\n",
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
 
         position += substr_len;
@@ -109,6 +111,8 @@ static bool make_token(char *e) {
             break;
           case TK_NUM:
           case TK_EQ:
+          case TK_HEX:
+          case TK_REG:
             strncpy(tokens[nr_token].str, substr_start, substr_len);
             tokens[nr_token].str[substr_len] = '\0';   
           default:
@@ -208,6 +212,9 @@ static uint32_t get_val(int p) {
   if (tokens[p].type == TK_NUM)
   {
     sscanf(tokens[p].str, "%d", &val);
+  } else if (tokens[p].type == TK_HEX)
+  {
+    sscanf(tokens[p].str, "%x", &val);
   }
   
   return val;
@@ -260,7 +267,19 @@ static uint32_t eval(int p, int q) {
         For now this token should be a number
         Return the value of the number
      */
-    return get_val(p);
+    uint32_t val = 0;
+    if (tokens[p].type == TK_NUM || tokens[p].type = TK_HEX)
+    {
+      val = get_val(p);
+    } else if (tokens[p].type == TK_REG)
+    {
+      bool success = false;
+      val = isa_reg_str2val(tokens[p].str + 1, &success);
+      assert(success == true);
+    }
+    
+    
+    return val;
   } else if (check_parentheses(p, q) == true)
   {
     /* The expression is surrounded by a matched pair of parentheses.

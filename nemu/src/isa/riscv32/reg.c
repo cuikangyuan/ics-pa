@@ -27,9 +27,24 @@ void isa_reg_display() {
       printf("%-4s: 0x%-16x \t", regs[j], cpu.gpr[j]._32);
   }
   printf("\n");
-  
+  printf("%-4s0x%-16x%-16d\n", "pc", cpu.pc, cpu.pc);
 }
 
 word_t isa_reg_str2val(const char *s, bool *success) {
+  *success = true;
+  if (strcmp(s, "pc") == 0)
+  {
+    return cpu.pc;
+  }
+  
+  for (int i = 0; i < ARRLEN(regs); i++)
+  {
+    if (strcmp(s, regs[i]) == 0)
+    {
+      return cpu.gpr[i]._32;
+    }
+    
+  }
+  *success = false;
   return 0;
 }
