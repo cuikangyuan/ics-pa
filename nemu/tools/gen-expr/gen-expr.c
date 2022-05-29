@@ -103,15 +103,16 @@ int main(int argc, char *argv[]) {
     {
       continue;
     }
-    
-    printf("buf1 = %s\n", buf1);
 
     int result;
     sscanf(buf1, "%d", &result);
     pclose(fp);
 
-    printf("%u %s\n", result, buf);
-    printf("case%d finish <-------", i + 1);
+    //expr(buf, &success);
+
+    printf("%u %s %u\n", result, buf);
+    printf("case%d finish <-------\n", i + 1);
+    printf("\n");
   }
   return 0;
 }
