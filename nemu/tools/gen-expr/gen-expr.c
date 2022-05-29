@@ -21,7 +21,7 @@ static int choose(int n) {
 }
 
 static void gen_num() {
-  sprintf(buf + strlen(buf), "%u", (unsigned int) rand() % 10000);
+  sprintf(buf + strlen(buf), "%u", (unsigned int) rand() % 1000);
   buf[strlen(buf)] = '\0';
 }
 
@@ -77,6 +77,8 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
+    printf("case%d start ------->\n", i + 1);
+
     memset(buf, 0, strlen(buf));
 
     gen_rand_expr();
@@ -94,7 +96,7 @@ int main(int argc, char *argv[]) {
     fp = popen("/tmp/.expr", "r");
     assert(fp != NULL);
 
-    char buf1[30] = {0};
+    char buf1[100] = {0};
     ret = fread(buf1, sizeof(buf1), 1, fp);
     
     if (ret != 0 || strlen(buf1) == 0)
@@ -102,12 +104,14 @@ int main(int argc, char *argv[]) {
       continue;
     }
     
+    printf("buf1 = %s\n", buf1);
 
     int result;
     sscanf(buf1, "%d", &result);
     pclose(fp);
 
     printf("%u %s\n", result, buf);
+    printf("case%d finish <-------", i + 1);
   }
   return 0;
 }
