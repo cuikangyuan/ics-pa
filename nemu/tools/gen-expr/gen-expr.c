@@ -68,6 +68,8 @@ static void gen_rand_expr() {
   buf[strlen(buf)] = '\0';
 }
 
+
+//./gen-expr 10000 > input
 int main(int argc, char *argv[]) {
   int seed = time(0);
   srand(seed);
@@ -77,7 +79,6 @@ int main(int argc, char *argv[]) {
   }
   int i;
   for (i = 0; i < loop; i ++) {
-    printf("case%d start ------->\n", i + 1);
 
     memset(buf, 0, strlen(buf));
 
@@ -110,9 +111,7 @@ int main(int argc, char *argv[]) {
 
     //expr(buf, &success);
 
-    printf("%u %s %u\n", result, buf);
-    printf("case%d finish <-------\n", i + 1);
-    printf("\n");
+    printf("%u %s\n", result, buf);
   }
   return 0;
 }

@@ -213,9 +213,10 @@ static uint32_t get_val(int p) {
   return val;
 }
 
+//4 + 3 * (2 - 1)
 static int get_main_opt(int p, int q) {
   int parentheses = 0, cur = 0;
-  int pos = 0;
+  int pos = -1;
   int i;
   for (i = p; i <= q; i++)
   {
