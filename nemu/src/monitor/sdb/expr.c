@@ -268,7 +268,7 @@ static uint32_t eval(int p, int q) {
         Return the value of the number
      */
     uint32_t val = 0;
-    if (tokens[p].type == TK_NUM || tokens[p].type = TK_HEX)
+    if (tokens[p].type == TK_NUM || tokens[p].type == TK_HEX)
     {
       val = get_val(p);
     } else if (tokens[p].type == TK_REG)
