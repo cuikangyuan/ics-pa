@@ -18,6 +18,8 @@ static bool g_print_step = false;
 const rtlreg_t rzero = 0;
 rtlreg_t tmp_reg[4];
 
+bool check_watchpoint();
+
 void device_update();
 void fetch_decode(Decode *s, vaddr_t pc);
 
@@ -101,6 +103,16 @@ void cpu_exec(uint64_t n) {
     fetch_decode_exec_updatepc(&s);
     g_nr_guest_instr ++;
     trace_and_difftest(&s, cpu.pc);
+
+    #ifdef CONFIG_ITRACE
+    if (check_watchpoint())
+    {
+      nemu_state.state = NEMU_STOP;
+    }
+    
+    #endif
+
+
     if (nemu_state.state != NEMU_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
   }

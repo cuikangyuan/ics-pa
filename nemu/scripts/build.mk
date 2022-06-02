@@ -55,3 +55,7 @@ $(BINARY): $(OBJS) $(ARCHIVES)
 
 clean:
 	-rm -rf $(BUILD_DIR)
+
+
+count:
+	find . -name "*.c" -or -name "*.h" -print | xargs grep -v "^$$" | wc -l

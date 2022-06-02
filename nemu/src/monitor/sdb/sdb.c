@@ -55,7 +55,12 @@ static int cmd_info(char *args) {
   {
     isa_reg_display();
     return 0;
+  } else if (!strcmp(args, "w"))
+  {
+    watchpoint_display();
+    return 0;
   }
+  
   
   return -1;
 }
@@ -96,11 +101,14 @@ static int cmd_p(char *args) {
   return 0;
 }
 static int cmd_w(char *args) {
-  TODO();
+  WP* p = new_wp();
+  strcpy(p->expr, args);
   return 0;
 }
 static int cmd_d(char *args) {
-  TODO();
+  int no;
+  sscanf(args, "%d", &no);
+  free_wp(no);
   return 0;
 }
 
