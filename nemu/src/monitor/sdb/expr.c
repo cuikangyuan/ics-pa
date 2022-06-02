@@ -4,10 +4,18 @@
  * Type 'man regex' for more information about POSIX regex functions.
  */
 #include <regex.h>
+#include <memory/vaddr.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ,
-  TK_NUM, TK_REG, TK_HEX
+  TK_NOTYPE = 256, 
+  TK_EQ,
+  TK_NUM, 
+  TK_REG, 
+  TK_HEX,
+  TK_AND,
+  TK_NOTEQUAL,
+  TK_DEREF,
+  TK_NEG
   /* TODO: Add more token types */
 
 };
@@ -31,8 +39,9 @@ static struct rule {
   {"\\)", ')'},         //parenthess_r
   {"0[Xx][a-fA-F0-9]+", TK_HEX}, //hex
   {"[0-9]+", TK_NUM},   //decimal
-  {"\\$[a-z][A-Z]+", TK_REG} //register
-
+  {"\\$[a-z][A-Z]+", TK_REG}, //register
+  {"&&", TK_AND},       //and
+  {"!=", TK_NOTEQUAL}   //not equal
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -110,7 +119,7 @@ static bool make_token(char *e) {
           case TK_NOTYPE:
             break;
           case TK_NUM:
-          case TK_EQ:
+          //case TK_EQ:
           case TK_HEX:
           case TK_REG:
             strncpy(tokens[nr_token].str, substr_start, substr_len);
@@ -136,7 +145,8 @@ static bool make_token(char *e) {
 
 
 static bool is_opt(int opt) {
-  if (opt == '+' || opt == '-' || opt == '*' || opt == '/' || opt == TK_EQ) return true;
+  if (opt == '+' || opt == '-' || opt == '*' || opt == '/' 
+       || opt == TK_EQ || opt == TK_NOTEQUAL || opt == TK_AND || opt == TK_NEG) return true;
   else return false;
 }
 
@@ -144,6 +154,9 @@ static int opt_level(int opt, int* cur) {
   int level = 0;
   switch (opt)
   {
+    case TK_NEG:
+      level = 2;
+      break;
     case '+':
     case '-':
       level = 4; 
@@ -153,7 +166,11 @@ static int opt_level(int opt, int* cur) {
       level = 3;
       break;
     case TK_EQ:
+    case TK_NOTEQUAL:
       level = 7;
+      break;
+    case TK_AND:
+      level = 11;
       break;
     default:
       break;
@@ -290,6 +307,16 @@ static uint32_t eval(int p, int q) {
   {
       int32_t val1, val2;
       int main_opt = get_main_opt(p, q);
+
+      if (tokens[main_opt].type == TK_NEG)
+      {
+        return -eval(main_opt + 1, q);
+      } else if (tokens[main_opt].type == TK_DEREF)
+      {
+        return vaddr_read(eval(main_opt + 1, q), 4);
+      }
+      
+    
       val1 = eval(p, main_opt - 1);
       val2 = eval(main_opt + 1, q);
       switch (tokens[main_opt].type)
@@ -302,6 +329,12 @@ static uint32_t eval(int p, int q) {
         return val1 * val2;
       case '/':
         return val1 / val2;
+      case TK_EQ:
+        return (uint32_t)(val1 == val2);
+      case TK_NOTEQUAL:
+        return (uint32_t)(val1 != val2);
+      case TK_AND:
+        return (uint32_t)(val1 && val2);
       default:
         assert(0);
         break;
@@ -319,6 +352,20 @@ word_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
+  int i;
+  for (i = 0; i < nr_token; i++)
+  {
+    if (tokens[i].type == '*' && (i == 0 || is_opt(tokens[i - 1].type)))
+    {
+      tokens[i].type = TK_DEREF;
+    }
+    if (tokens[i].type == '-' && (i == 0 || is_opt(tokens[i - 1].type)))
+    {
+      tokens[i].type = TK_NEG;
+    }
+    
+  }
+
   *success = true;
 
   return eval(0, nr_token - 1);
