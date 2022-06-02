@@ -58,4 +58,4 @@ clean:
 
 
 count:
-	find . -name "*.c" -or -name "*.h" -print | xargs grep -v "^$$" | wc -l
+	find . "(" -name "*.c" -or -name "*.h" ")" -print | xargs grep -v "^$$" | wc -l
