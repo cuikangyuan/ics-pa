@@ -86,7 +86,10 @@ static int cmd_x(char *args) {
   }
 
   u_int32_t val;
-  sscanf(token, "0x%x", &val);
+  bool success;
+  val = expr(token, &success);
+  assert(success == true);
+  //sscanf(token, "0x%x", &val);
   for (int64_t i = 0; i < n; i++)
   {
     printf("0x%08lx   ", val + i * 4);
