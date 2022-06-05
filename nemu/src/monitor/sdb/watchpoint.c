@@ -34,7 +34,7 @@ WP* new_wp() {
   tmp_h->next = tmp_f;
   free_ = tmp_f->next;
   tmp_f->next = NULL;
-  rerurn tmp_f;
+  return tmp_f;
 }
 
 void free_wp(int no) {
@@ -99,7 +99,7 @@ bool check_watchpoint() {
     
   }
   
-  return true;
+  return ret;
 }
 /* TODO: Implement the functionality of watchpoint */
 
