@@ -3,6 +3,7 @@
 
 #include <common.h>
 
+//通用寄存器
 typedef struct {
   struct {
     rtlreg_t _32;
