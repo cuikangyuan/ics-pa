@@ -9,11 +9,11 @@ extern rtlreg_t tmp_reg[4];
 #define dsrc1 (id_src1->preg)
 #define dsrc2 (id_src2->preg)
 #define ddest (id_dest->preg)
-#define s0    (&tmp_reg[0])
-#define s1    (&tmp_reg[1])
-#define s2    (&tmp_reg[2])
-#define t0    (&tmp_reg[3])
-#define rz (&rzero)
+#define s0    (&tmp_reg[0])//临时寄存器
+#define s1    (&tmp_reg[1])//临时寄存器
+#define s2    (&tmp_reg[2])//临时寄存器
+#define t0    (&tmp_reg[3])//临时寄存器
+#define rz (&rzero) //零寄存器
 
 #define def_rtl(name, ...) void concat(rtl_, name)(Decode *s, __VA_ARGS__)
 

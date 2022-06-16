@@ -4,6 +4,7 @@
 #include "c_op.h"
 #include <memory/vaddr.h>
 
+//RTL基本指令
 /* RTL basic instructions */
 
 #define def_rtl_compute_reg(name) \
