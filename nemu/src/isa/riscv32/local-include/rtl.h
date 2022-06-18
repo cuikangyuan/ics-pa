@@ -5,5 +5,5 @@
 #include "reg.h"
 
 // no isa-dependent rtl instructions
-
+//ISA相关的RTL伪指令
 #endif

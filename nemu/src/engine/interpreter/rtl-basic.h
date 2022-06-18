@@ -4,7 +4,7 @@
 #include "c_op.h"
 #include <memory/vaddr.h>
 
-//RTL基本指令
+//RTL基本指令 不需要使用临时寄存器
 /* RTL basic instructions */
 
 #define def_rtl_compute_reg(name) \

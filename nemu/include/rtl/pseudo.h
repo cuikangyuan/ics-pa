@@ -6,7 +6,8 @@
 #endif
 
 /* RTL pseudo instructions */
-
+//ISA无关的RTL伪指令
+//RTL伪指令 通过RTL基本指令或者已经实现的RTL伪指令来实现
 static inline def_rtl(li, rtlreg_t* dest, const rtlreg_t imm) {
   rtl_addi(s, dest, rz, imm);
 }
