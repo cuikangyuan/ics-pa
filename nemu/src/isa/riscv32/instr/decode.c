@@ -29,7 +29,8 @@ static def_DHelper(I) {
   decode_op_r(s, id_dest, s->isa.instr.i.rd, true);
 }
 
-// def_DHelper : 译码辅助函数 会依赖译码操作数辅助函数 把指令中的操作数信息记录在s的dest(目的操作数),src1(源操作数),src2(源操作数)中
+// def_DHelper : 
+//译码辅助函数 会依赖译码操作数辅助函数 把指令中的操作数信息记录在s的dest(目的操作数),src1(源操作数),src2(源操作数)中
 static def_DHelper(U) {
   decode_op_i(s, id_src1, s->isa.instr.u.imm31_12 << 12, true);
   decode_op_r(s, id_dest, s->isa.instr.u.rd, true);
@@ -43,6 +44,7 @@ static def_DHelper(S) {
 }
 
 def_THelper(load) {
+  //这里def_INSTR_TAB也是一条字符串匹配规则, 但它并不需要调用译码辅助函数. 这条规则描述了"在load类型指令中, 如果funct3为010, 则为lw指令
   def_INSTR_TAB("??????? ????? ????? 010 ????? ????? ??", lw);
   return EXEC_ID_inv;
 }
@@ -52,6 +54,27 @@ def_THelper(store) {
   return EXEC_ID_inv;
 }
 
+/*
+  def_INSTR_IDTAB 对于lui指令宏展开
+  do {
+    uint32_t key, mask, shift;
+    pattern_decode("??????? ????? ????? ??? ????? 01101 11",
+                   (sizeof("??????? ????? ????? ??? ????? 01101 11") - 1), &key,
+                   &mask, &shift);
+    if (((get_instr(s) >> shift) & mask) == key) {
+      {
+        decode_U(s, 0);
+        return table_lui(s);
+      };
+    }
+  } while (0);
+
+  table_lui() 直接返回标识lui指令的唯一ID ，这个ID作为译码结果的返回值
+  从table_main方法返回后
+  在fetch_decode()中用这个ID值索引g_exec_table数组
+*/
+
+//表格辅助函数
 def_THelper(main) {
   def_INSTR_IDTAB("??????? ????? ????? ??? ????? 00000 11", I     , load);
   def_INSTR_IDTAB("??????? ????? ????? ??? ????? 01000 11", S     , store);
