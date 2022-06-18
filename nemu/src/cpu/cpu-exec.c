@@ -38,9 +38,10 @@ static const void* g_exec_table[TOTAL_INSTR] = {
   MAP(INSTR_LIST, FILL_EXEC_TABLE)
 };
 
+//取指 译码 执行 更新PC
 static void fetch_decode_exec_updatepc(Decode *s) {
   fetch_decode(s, cpu.pc);
-  s->EHelper(s);
+  s->EHelper(s);//模拟指令执行的真实操作
   cpu.pc = s->dnpc;
 }
 
@@ -59,11 +60,11 @@ void assert_fail_msg() {
 }
 
 void fetch_decode(Decode *s, vaddr_t pc) {
-  s->pc = pc;
-  s->snpc = pc;
+  s->pc = pc;//当前指令pc
+  s->snpc = pc;//static next pc 下一条指令pc
   int idx = isa_fetch_decode(s);
-  s->dnpc = s->snpc;
-  s->EHelper = g_exec_table[idx];
+  s->dnpc = s->snpc;//dynamic next pc 
+  s->EHelper = g_exec_table[idx];//找到对应指令的执行辅助函数
 #ifdef CONFIG_ITRACE
   char *p = s->logbuf;
   p += snprintf(p, sizeof(s->logbuf), FMT_WORD ":", s->pc);
