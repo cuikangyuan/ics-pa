@@ -9,6 +9,7 @@ static uint32_t get_instr(Decode *s) {
 }
 
 // decode operand helper
+//def_DopHelper 译码操作数辅助函数
 #define def_DopHelper(name) \
   void concat(decode_op_, name) (Decode *s, Operand *op, word_t val, bool flag)
 
@@ -28,6 +29,7 @@ static def_DHelper(I) {
   decode_op_r(s, id_dest, s->isa.instr.i.rd, true);
 }
 
+// def_DHelper : 译码辅助函数 会依赖译码操作数辅助函数 把指令中的操作数信息记录在s的dest(目的操作数),src1(源操作数),src2(源操作数)中
 static def_DHelper(U) {
   decode_op_i(s, id_src1, s->isa.instr.u.imm31_12 << 12, true);
   decode_op_r(s, id_dest, s->isa.instr.u.rd, true);
