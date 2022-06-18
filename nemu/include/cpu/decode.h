@@ -48,6 +48,10 @@ typedef struct Decode {
 static inline def_DHelper(empty) {}
 
 
+//将模式字符串转换成3个整型变量
+//key 抽取模式字符串中的0和1 (opcode)
+//mask 表示key的掩码
+//shift 表示opcode距离最低位的比特数量
 // --- pattern matching mechanism ---
 __attribute__((always_inline))
 static inline void pattern_decode(const char *str, int len,
