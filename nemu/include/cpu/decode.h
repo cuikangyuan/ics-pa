@@ -33,12 +33,14 @@ typedef struct Decode {
 
 // `INSTR_LIST` is defined at src/isa/$ISA/include/isa-all-instr.h
 #define def_EXEC_ID(name) concat(EXEC_ID_, name),
+//为所有的执行辅助函数定义相应的ID
 #define def_all_EXEC_ID() enum { MAP(INSTR_LIST, def_EXEC_ID) TOTAL_INSTR }
 
 
 // --- prototype of table helpers ---
 #define def_THelper(name) static inline int concat(table_, name) (Decode *s)
 #define def_THelper_body(name) def_THelper(name) { return concat(EXEC_ID_, name); }
+//为每条指令定义一个表格辅助函数, 用于返回相应的ID
 #define def_all_THelper() MAP(INSTR_LIST, def_THelper_body)
 
 

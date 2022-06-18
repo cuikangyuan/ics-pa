@@ -33,6 +33,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 
 #include <isa-exec.h>
 
+//所有的执行辅助函数定义
 #define FILL_EXEC_TABLE(name) [concat(EXEC_ID_, name)] = concat(exec_, name),
 static const void* g_exec_table[TOTAL_INSTR] = {
   MAP(INSTR_LIST, FILL_EXEC_TABLE)
@@ -40,9 +41,9 @@ static const void* g_exec_table[TOTAL_INSTR] = {
 
 //取指 译码 执行 更新PC
 static void fetch_decode_exec_updatepc(Decode *s) {
-  fetch_decode(s, cpu.pc);
+  fetch_decode(s, cpu.pc);//取指 译码
   s->EHelper(s);//模拟指令执行的真实操作
-  cpu.pc = s->dnpc;
+  cpu.pc = s->dnpc;//更新PC
 }
 
 static void statistic() {
@@ -59,9 +60,11 @@ void assert_fail_msg() {
   statistic();
 }
 
+//snpc是指代码中的下一条指令
+//dnpc是指程序运行过程中的下一条指令
 void fetch_decode(Decode *s, vaddr_t pc) {
   s->pc = pc;//当前指令pc
-  s->snpc = pc;//static next pc 下一条指令pc
+  s->snpc = pc;//下一条指令pc
   int idx = isa_fetch_decode(s);
   s->dnpc = s->snpc;//dynamic next pc 
   s->EHelper = g_exec_table[idx];//找到对应指令的执行辅助函数
