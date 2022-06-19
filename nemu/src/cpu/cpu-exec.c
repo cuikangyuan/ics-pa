@@ -4,6 +4,14 @@
 #include <isa-all-instr.h>
 #include <locale.h>
 
+/*
+ *实现新指令 
+ * 1.在nemu/src/isa/$ISA/instr/decode.c中添加正确的模式匹配规则
+ * 2.用RTL实现正确的执行辅助函数, 需要注意使用RTL伪指令时要遵守上文提到的小型调用约定
+ * 3.在nemu/src/isa/$ISA/include/isa-all-instr.h中把指令添加到INSTR_LIST中
+ * 4.必要时在nemu/src/isa/$ISA/include/isa-exec.h中添加相应的头文件
+*/
+
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.

@@ -5,6 +5,7 @@
 #include <memory/vaddr.h>
 
 //RTL基本指令 不需要使用临时寄存器
+//不同的ISA都可以使用RTL基本指令, 因此它们属于ISA无关的代码
 /* RTL basic instructions */
 
 #define def_rtl_compute_reg(name) \
