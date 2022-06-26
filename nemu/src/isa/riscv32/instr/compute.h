@@ -22,3 +22,8 @@ def_EHelper(jalr) {
   rtl_andi(s, &s->dnpc, &s->dnpc, ~1);
   rtl_addi(s, ddest, s0, 0);
 }
+
+def_EHelper(add) {
+  //add test : rs2: 10, rs1:18, rd: 10 
+  rtl_add(s, ddest, dsrc1, dsrc2);
+}
