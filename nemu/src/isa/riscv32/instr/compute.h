@@ -24,6 +24,25 @@ def_EHelper(jalr) {
 }
 
 def_EHelper(add) {
-  //add test : rs2: 10, rs1:18, rd: 10 
   rtl_add(s, ddest, dsrc1, dsrc2);
+}
+
+def_EHelper(sub) {
+  rtl_sub(s, ddest, dsrc1, dsrc2);
+}
+
+def_EHelper(sltiu) {
+  rtl_setrelopi(s, RELOP_LTU, ddest, dsrc1, id_src2->imm);
+}
+
+def_EHelper(beq) {
+  if (*dsrc1 == *ddest) {
+    rtl_addi(s, &s->dnpc, &s->pc, id_src2->imm);
+  }
+}
+
+def_EHelper(bne) {
+  if (*dsrc1 != *ddest) {
+    rtl_addi(s, &s->dnpc, &s->pc, id_src2->imm);
+  }
 }
